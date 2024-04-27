@@ -1,19 +1,15 @@
 use std::env;
 
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{web, App, HttpServer};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
-#[utoipa::path(get, path = "/api/tasks")]
-#[get("/api/tasks")]
-async fn list_tasks() -> impl Responder {
-    HttpResponse::Ok().body("Task List")
-}
+mod handlers;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     #[derive(OpenApi)]
-    #[openapi(paths(list_tasks), components(schemas()))]
+    #[openapi(paths(handlers::list_tasks), components(schemas()))]
     struct ApiDoc;
     let openapi = ApiDoc::openapi();
 
@@ -28,7 +24,7 @@ async fn main() -> std::io::Result<()> {
                 SwaggerUi::new("/api/swagger-ui/{_:.*}").url("/api/openapi.json", openapi.clone()),
             )
             .service(web::redirect("/", "/api/swagger-ui/"))
-            .service(list_tasks)
+            .service(handlers::list_tasks)
     })
     .bind(("0.0.0.0", port))?
     .run()
