@@ -1,6 +1,8 @@
 use std::env;
 
 use actix_web::{web, App, HttpServer};
+use env_logger;
+use log::{info, LevelFilter};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -17,6 +19,10 @@ async fn main() -> std::io::Result<()> {
         .unwrap_or_else(|_| "8080".to_string())
         .parse::<u16>()
         .expect("SERVER_PORT must be a valid port number");
+
+    env_logger::builder().filter_level(LevelFilter::Info).init();
+
+    info!("Starting server on port {}", port);
 
     HttpServer::new(move || {
         App::new()
