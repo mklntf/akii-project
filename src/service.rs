@@ -53,10 +53,7 @@ impl Service {
         let mut tasks = self.tasks.lock().unwrap();
         let task = tasks.iter().position(|task| task.id == id);
 
-        match task {
-            Some(index) => Some(tasks.remove(index)),
-            None => None,
-        }
+        task.map(|index| tasks.remove(index))
     }
 }
 
@@ -115,12 +112,8 @@ mod tests {
     #[test]
     fn test_service_get_task_failure() {
         let service = Service::new();
-        let task = service.get_task(0);
 
-        match task {
-            Some(_) => panic!("Task should not exist"),
-            None => assert!(true),
-        };
+        assert!(service.get_task(0).is_none());
     }
 
     #[test]
@@ -143,12 +136,8 @@ mod tests {
     #[test]
     fn test_service_delete_task_failure() {
         let service = Service::new();
-        let task = service.delete_task(0);
 
-        match task {
-            Some(_) => panic!("Task should not exist"),
-            None => assert!(true),
-        };
+        assert!(service.delete_task(0).is_none());
     }
 
     #[test]

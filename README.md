@@ -4,14 +4,14 @@ The AKII Semester 2 project.
 
 ## Unit Tests & Code Coverage
 
-Run the following command to execute unit tests and generate a code coverage report.
+Run `cargo llvm-cov` to execute unit tests and generate a code coverage report.
 
-```bash
-cargo llvm-cov
-```
+To generate a html report run `cargo llvm-cov --html`.
 
-To generate a html report add the option `--html`.
+## Static Code Analysis
 
-```bash
-cargo llvm-cov --html
-```
+To analyze the code run `cargo clippy --all-targets --all-features -- -D warnings -W clippy::all -W clippy::pedantic`
+
+## Vulnerability check
+
+Run the `cargo audit` command to check code for vulnerabilities.
