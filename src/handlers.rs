@@ -3,7 +3,7 @@ use log::info;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
-use crate::service::Task;
+use crate::model::Task;
 use crate::AppState;
 
 #[derive(Clone, Serialize, Deserialize, utoipa::ToSchema)]

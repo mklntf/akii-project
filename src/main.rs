@@ -3,13 +3,17 @@ use std::env;
 use actix_web::{web, App, HttpServer};
 use handlers::TaskCreateInput;
 use log::{info, LevelFilter};
-use service::{Service, Task};
+use model::Task;
+use service::Service;
 use std::io::Result;
 use std::sync::Arc;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
+mod database;
 mod handlers;
+mod model;
+mod repository;
 mod service;
 
 struct AppState {
@@ -36,12 +40,16 @@ async fn main() -> Result<()> {
         .parse::<u16>()
         .expect("SERVER_PORT must be a valid port number");
 
+    let db = env::var("DATABASE_URL").unwrap_or_else(|_| "/tmp/tasks.db".to_string());
+
+    let pool = database::create_pool(db.as_ref());
+    let repository = repository::Database::new(pool);
+    let service = Service::new(Box::new(repository));
+    let app_state = web::Data::new(Arc::new(AppState { service }));
+
     env_logger::builder().filter_level(LevelFilter::Info).init();
 
     info!("Starting server on port {}", port);
-
-    let service = Service::new();
-    let app_state = web::Data::new(Arc::new(AppState { service }));
 
     HttpServer::new(move || {
         App::new()
