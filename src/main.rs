@@ -1,7 +1,6 @@
 use std::env;
 
 use actix_web::{web, App, HttpServer};
-use env_logger;
 use handlers::TaskCreateInput;
 use log::{info, LevelFilter};
 use service::{Service, Task};
