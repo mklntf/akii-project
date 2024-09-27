@@ -3,13 +3,46 @@ use utoipa::ToSchema;
 
 #[derive(Clone, Serialize, Deserialize, ToSchema)]
 pub struct Task {
-    pub id: u32,
-    pub name: String,
+    id: u32,
+    name: String,
 }
 
 impl Task {
-    pub fn new(id: u32, name: String) -> Self {
-        Task { id, name }
+    pub fn id(&self) -> u32 {
+        self.id
+    }
+
+    #[allow(dead_code)]
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+}
+
+pub struct TaskBuilder {
+    id: u32,
+    name: String,
+}
+
+impl TaskBuilder {
+    pub fn new() -> Self {
+        TaskBuilder { id: 0, name: "".to_string() }
+    }
+
+    pub fn id(&mut self, id: u32) -> &mut Self {
+        self.id = id;
+        self
+    }
+
+    pub fn name(&mut self, name: &str) -> &mut Self {
+        self.name = name.to_string();
+        self
+    }
+
+    pub fn build(&self) -> Task {
+        Task {
+            id: self.id,
+            name: self.name.clone()
+        }
     }
 }
 
@@ -19,7 +52,7 @@ mod tests {
 
     #[test]
     fn test_task_new() {
-        let task = Task::new(0, "Example Task".to_string());
+        let task = TaskBuilder::new().id(0).name("Example Task").build();
 
         assert_eq!(task.id, 0);
         assert_eq!(task.name, "Example Task");
@@ -27,7 +60,7 @@ mod tests {
 
     #[test]
     fn test_task_serialize() {
-        let task = Task::new(0, "Example Task".to_string());
+        let task = TaskBuilder::new().id(0).name("Example Task").build();
         let json = serde_json::to_string(&task).unwrap();
 
         assert_eq!(json, r#"{"id":0,"name":"Example Task"}"#);

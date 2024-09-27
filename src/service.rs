@@ -48,8 +48,8 @@ mod tests {
         let service = Service::new(Box::new(repository));
         let task = service.create_task("Example Task".to_string());
 
-        assert_eq!(task.id, 0);
-        assert_eq!(task.name, "Example Task");
+        assert_eq!(task.id(), 0);
+        assert_eq!(task.name(), "Example Task");
     }
 
     #[test]
@@ -61,8 +61,8 @@ mod tests {
         let tasks = service.list_tasks();
 
         assert_eq!(tasks.len(), 1);
-        assert_eq!(tasks[0].id, 0);
-        assert_eq!(tasks[0].name, "Example Task");
+        assert_eq!(tasks[0].id(), 0);
+        assert_eq!(tasks[0].name(), "Example Task");
     }
 
     #[test]
@@ -73,8 +73,8 @@ mod tests {
 
         let task = service.get_task(0).unwrap();
 
-        assert_eq!(task.id, 0);
-        assert_eq!(task.name, "Example Task");
+        assert_eq!(task.id(), 0);
+        assert_eq!(task.name(), "Example Task");
     }
 
     #[test]
@@ -96,8 +96,8 @@ mod tests {
 
         let task = service.delete_task(0).unwrap();
 
-        assert_eq!(task.id, 0);
-        assert_eq!(task.name, "Example Task");
+        assert_eq!(task.id(), 0);
+        assert_eq!(task.name(), "Example Task");
 
         let tasks = service.list_tasks();
         assert_eq!(tasks.len(), 0);

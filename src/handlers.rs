@@ -3,7 +3,7 @@ use log::info;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
-use crate::model::Task;
+use crate::model::TaskBuilder;
 use crate::AppState;
 
 #[derive(Clone, Serialize, Deserialize, utoipa::ToSchema)]
@@ -18,7 +18,7 @@ pub struct TaskCreateInput {
     responses(
         (
             status = 200, body = Vec<Task>, content_type = "application/json",
-            example = json!([Task::new(0, "Example Task".to_string())])
+            example = json!([TaskBuilder::new().id(0).name("Example Task").build()])
         ),
     )
 )]
@@ -41,7 +41,7 @@ async fn list_tasks(state: web::Data<Arc<AppState>>) -> impl Responder {
     responses(
         (
             status = 200, body = Task, content_type = "application/json",
-            example = json!(Task::new(0, "Example Task".to_string()))
+            example = json!(TaskBuilder::new().id(0).name("Example Task").build())
         ),
     )
 )]
@@ -69,7 +69,7 @@ async fn create_task(
     responses(
         (
             status = 200, body = Task, content_type = "application/json",
-            example = json!(Task::new(0, "Example Task".to_string()))
+            example = json!(TaskBuilder::new().id(0).name("Example Task").build())
         ),
         (status = 404, description = "Task not found")
     )
@@ -98,7 +98,7 @@ async fn get_task(state: web::Data<Arc<AppState>>, id: web::Path<u32>) -> impl R
     responses(
         (
             status = 200, body = Task, content_type = "application/json",
-            example = json!(Task::new(0, "Example Task".to_string()))
+            example = json!(TaskBuilder::new().id(0).name("Example Task").build())
         ),
         (status = 404, description = "Task not found")
     )

@@ -1,4 +1,4 @@
-use crate::{database::get_connection, model::Task};
+use crate::{database::get_connection, model::{Task, TaskBuilder}};
 use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
 use std::sync::Arc;
@@ -43,10 +43,9 @@ impl Repository for Database {
 
         let tasks = statement
             .query_map([], |row| {
-                Ok(Task {
-                    id: row.get(0)?,
-                    name: row.get(1)?,
-                })
+                let id = row.get(0)?;
+                let name: String = row.get(1)?;
+                Ok(TaskBuilder::new().id(id).name(&name).build())
             })
             .expect("Failed to query tasks")
             .map(|result| result.expect("Failed to map task"))
@@ -64,7 +63,7 @@ impl Repository for Database {
 
         let id = u32::try_from(connection.last_insert_rowid()).expect("Failed to convert id");
 
-        Task { id, name }
+        TaskBuilder::new().id(id).name(&name).build()
     }
 
     fn get_task(&self, id: u32) -> Option<Task> {
@@ -76,10 +75,9 @@ impl Repository for Database {
 
         statement
             .query_row([id], |row| {
-                Ok(Task {
-                    id: row.get(0)?,
-                    name: row.get(1)?,
-                })
+                let id = row.get(0)?;
+                let name: String = row.get(1)?;
+                Ok(TaskBuilder::new().id(id).name(&name).build())
             })
             .ok()
     }
@@ -127,7 +125,7 @@ impl Repository for Memory {
         let id = *count;
         *count += 1;
 
-        let task = Task::new(id, name);
+        let task = TaskBuilder::new().id(id).name(&name).build();
         tasks.push(task.clone());
 
         task
@@ -135,12 +133,12 @@ impl Repository for Memory {
 
     fn get_task(&self, id: u32) -> Option<Task> {
         let tasks = self.tasks.lock().unwrap();
-        tasks.iter().find(|task| task.id == id).cloned()
+        tasks.iter().find(|task| task.id() == id).cloned()
     }
 
     fn delete_task(&self, id: u32) -> Option<Task> {
         let mut tasks = self.tasks.lock().unwrap();
-        let task = tasks.iter().position(|task| task.id == id);
+        let task = tasks.iter().position(|task| task.id() == id);
 
         task.map(|index| tasks.remove(index))
     }
@@ -167,8 +165,8 @@ mod tests {
 
         let task = database.add_task("Example Task".to_string());
 
-        assert_eq!(task.id, 1);
-        assert_eq!(task.name, "Example Task");
+        assert_eq!(task.id(), 1);
+        assert_eq!(task.name(), "Example Task");
     }
 
     #[test]
@@ -180,8 +178,8 @@ mod tests {
 
         let task = database.get_task(1).unwrap();
 
-        assert_eq!(task.id, 1);
-        assert_eq!(task.name, "Example Task");
+        assert_eq!(task.id(), 1);
+        assert_eq!(task.name(), "Example Task");
     }
 
     //#[test]
