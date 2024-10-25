@@ -1,4 +1,7 @@
-use crate::{database::get_connection, model::{Task, TaskBuilder}};
+use crate::{
+    database::get_connection,
+    model::{Task, TaskBuilder},
+};
 use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
 use std::sync::Arc;

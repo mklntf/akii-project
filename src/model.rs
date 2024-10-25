@@ -25,7 +25,10 @@ pub struct TaskBuilder {
 
 impl TaskBuilder {
     pub fn new() -> Self {
-        TaskBuilder { id: 0, name: "".to_string() }
+        TaskBuilder {
+            id: 0,
+            name: String::new(),
+        }
     }
 
     pub fn id(&mut self, id: u32) -> &mut Self {
@@ -41,7 +44,7 @@ impl TaskBuilder {
     pub fn build(&self) -> Task {
         Task {
             id: self.id,
-            name: self.name.clone()
+            name: self.name.clone(),
         }
     }
 }
