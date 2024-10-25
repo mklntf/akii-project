@@ -5,6 +5,7 @@ use std::sync::Arc;
 
 use crate::model::TaskBuilder;
 use crate::AppState;
+use crate::Task;
 
 #[derive(Clone, Serialize, Deserialize, utoipa::ToSchema)]
 pub struct TaskCreateInput {
